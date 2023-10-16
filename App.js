@@ -1,20 +1,32 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import ListScreen from './ListScreen';
+import ProductScreen from './ProductScreen';
+import ProductDetailScreen from './ProductDetailScreen';
+import SQLite from 'react-native-sqlite-storage';
 
-export default function App() {
+const Stack = createStackNavigator();
+
+function App() {
+  // Initialize and connect to the SQLite database
+  useEffect(() => {
+    const db = SQLite.openDatabase(
+      { name: 'shoppingList.db', createFromLocation: '~shoppingList.db' },
+      () => console.log('Database connected'),
+      (error) => console.error('Error connecting to the database', error)
+    );
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="List">
+        <Stack.Screen name="List" component={ListScreen} />
+        <Stack.Screen name="Products" component={ProductScreen} />
+        <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
